@@ -1,0 +1,49 @@
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.idea/
+.vscode/
+
+# Large model checkpoints (hosted on Hugging Face Hub)
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Raw satellite & lidar datasets (hosted on Hugging Face Datasets)
+data/
+ir10.5/
+vis0.6/
+vis06/
+vfms/
+era5/
+era5_all_hours/
+hf_staging/
+
+# Keep benchmark evaluation JSONs & sanity check plots, ignore checkpoints and logs
+outputs/**/*.pt
+outputs/**/*.log
+outputs/cvpr_experiments/ablation_ckpts/
+outputs/cvpr_experiments/modality_ckpts/
+outputs/cvpr_experiments/sparsity_ckpts/
+outputs/cvpr_experiments/synoptic_ckpts/
+
+# Internal notes and LaTeX manuscript sources (keep only PNG figures used in README.md)
+PLAN.md
+results.md
+paper/*
+!paper/figures/
+paper/figures/*
+!paper/figures/fig1_dataset_overview.png
+!paper/figures/fig2_dataset_statistics.png
+!paper/figures/fig3_architecture_pipeline.png
+!paper/figures/fig4_qualitative_comparison.png
+!paper/figures/fig5_altitude_and_regime_breakdown.png
+!paper/figures/fig6_ablation_and_sparsity.png
+!paper/figures/fig_alpha_cloud_top_overlay.png
+
+# Packaged code archive
+code.zip
