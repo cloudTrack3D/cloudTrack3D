@@ -32,6 +32,7 @@ Official PyTorch implementation, benchmark evaluation suite, and dataset tools f
 ```text
 .
 ├── dataset.py                                   # Co-registration, 3-beam ICESat-2 projection, 1f/3f IR+VIS & ERA5 datasets
+├── era5_db.py                                   # ERA5 pressure-level reader & temporal interpolator (supports HF .npz & raw .npy)
 ├── models.py                                    # RadiometricContextStem, U-Net, SegViT, SAM 2, DINOv3, Structural Ordering Head
 ├── losses.py                                    # Supervised, UniMatch, S4MC, Bilateral Dilated & Distance-Adaptive SSL losses
 ├── augmentations.py                             # Weak geometric & multi-frame coherent strong radiometric + CutMix augmentations
@@ -41,13 +42,7 @@ Official PyTorch implementation, benchmark evaluation suite, and dataset tools f
 ├── run_ours_1f_vis_component_ablation.py        # Component & hyperparameter sensitivity ablation suite on 1f IR+VIS
 ├── run_cvpr_experiments.py                      # Classical/GBDT baselines, modality disentanglement, beam sparsity & synoptic splits
 ├── run_era5_experiments.py                      # ERA5 reanalysis integration & meteorological benchmark experiments
-├── run_extended_era5_analysis.py                # Pressure-slab, thermodynamic channel & forecast lead-time experiments
-├── run_mixed_unified_era5_study.py              # Late-fused FiLM + Residual ERA5 prior mixed-unified architecture study
-├── evaluate_and_compare.py                      # Unified sparse-track evaluation & altitude/layer regime breakdown
-├── generate_paper_figures.py                    # Generates main benchmark & ablation figures (fig1 to fig6)
-├── prepare_hf_dataset.py                        # Packages CloudTrack-3D archives & manifests for Hugging Face Hub
-├── upload_to_huggingface.py                     # Uploads packaged dataset to cloudTrack3D/CloudTrack-3D on Hugging Face Hub
-└── outputs/                                     # Precomputed benchmark evaluation JSON summaries & metrics
+└── run_extended_era5_analysis.py                # Pressure-slab, thermodynamic channel & forecast lead-time experiments
 ```
 
 ---

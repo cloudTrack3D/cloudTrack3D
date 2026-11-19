@@ -30,6 +30,7 @@ from dataset import (
     MAX_HEIGHT_KM,
     CloudPatchDataset,
     MatchedGranule,
+    _resolve_data_dir,
     discover_matched_granules,
     extract_granule_tracks,
     filter_granules_with_30min_window,
@@ -82,6 +83,8 @@ def preload_all_images_and_tracks(
     vis_dir: str = "../vis0.6",
 ) -> tuple[dict[str, np.ndarray], dict[str, dict[str, np.ndarray]]]:
     t0 = time.time()
+    ir_dir = _resolve_data_dir(ir_dir)
+    vis_dir = _resolve_data_dir(vis_dir)
     paths: set[str] = set()
     for g in granules_all:
         for fn in get_3frame_filenames(g.img_name):
@@ -136,8 +139,8 @@ def make_fast_patch_dataset(
     ds.use_era5 = False
     ds.use_satellite = True
     ds._era5_cache = {}
-    ds.ir_dir = "../ir10.5"
-    ds.vis_dir = "../vis0.6"
+    ds.ir_dir = _resolve_data_dir("../ir10.5")
+    ds.vis_dir = _resolve_data_dir("../vis0.6")
     ds.allowed_beams = tuple(allowed_beams)
     ds._img_cache = img_cache
 
@@ -821,10 +824,7 @@ def main() -> None:
         all_res["diurnal_and_seasonal"] = diurnal_seasonal
         save_json(all_res, out_json)
 
-    print("\n=== Generating All Paper Figures ===")
-    import generate_paper_figures
-    generate_paper_figures.main()
-    print("\n=== ALL CVPR 2027 EXPERIMENTS & FIGURES COMPLETED SUCCESSFULLY! ===")
+    print("\n=== ALL CVPR 2027 EXPERIMENTS COMPLETED SUCCESSFULLY! ===")
 
 
 if __name__ == "__main__":

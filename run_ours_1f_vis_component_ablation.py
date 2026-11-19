@@ -42,6 +42,8 @@ from augmentations import (
     apply_weak_augmentation,
 )
 from dataset import (
+    InMemoryDataset,
+    add_derived_metrics,
     discover_matched_granules,
     filter_granules_with_30min_window,
     split_granules_chronologically,
@@ -75,10 +77,6 @@ from run_s4mc_and_dist_ours import (
     compute_cls_objective,
     compute_reg_objective,
     load_ckpt_state,
-)
-from run_tables45_and_3fera5_ours import (
-    InMemoryDataset,
-    add_derived_metrics,
 )
 
 OUT_DIR = "outputs/ablation_1f_vis_components"

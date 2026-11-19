@@ -7,11 +7,12 @@ venv/
 .idea/
 .vscode/
 
-# Large model checkpoints (hosted on Hugging Face Hub)
+# Model checkpoints & generated experiment outputs
 *.pt
 *.pth
 *.ckpt
 *.safetensors
+outputs/
 
 # Raw satellite & lidar datasets (hosted on Hugging Face Datasets)
 data/
@@ -23,27 +24,31 @@ era5/
 era5_all_hours/
 hf_staging/
 
-# Keep benchmark evaluation JSONs & sanity check plots, ignore checkpoints and logs
-outputs/**/*.pt
-outputs/**/*.log
-outputs/cvpr_experiments/ablation_ckpts/
-outputs/cvpr_experiments/modality_ckpts/
-outputs/cvpr_experiments/sparsity_ckpts/
-outputs/cvpr_experiments/synoptic_ckpts/
+# Maintainer-only, exploratory & one-off paper-figure scripts
+publish_to_hf.py
+prepare_hf_dataset.py
+upload_to_huggingface.py
+update_hf_readme_and_viewer.py
+download_vis06.py
+run_tables45_and_3fera5_ours.py
+run_mixed_unified_era5_study.py
+evaluate_and_compare.py
+sanity_check.py
+run_forecast_sweep.py
+generate_paper_figures.py
+generate_alpha_cloud_overlay_fig.py
+generate_era5_figures.py
+generate_satellite_era5_matching_figures.py
+generate_supp_qualitative_figures.py
 
-# Internal notes and LaTeX manuscript sources (keep only PNG figures used in README.md)
+# Internal notes, zip archive, and LaTeX manuscript sources (keep only the 4 PNG figures used in README.md)
+code.zip
 PLAN.md
 results.md
 paper/*
 !paper/figures/
 paper/figures/*
 !paper/figures/fig1_dataset_overview.png
-!paper/figures/fig2_dataset_statistics.png
 !paper/figures/fig3_architecture_pipeline.png
 !paper/figures/fig4_qualitative_comparison.png
 !paper/figures/fig5_altitude_and_regime_breakdown.png
-!paper/figures/fig6_ablation_and_sparsity.png
-!paper/figures/fig_alpha_cloud_top_overlay.png
-
-# Packaged code archive
-code.zip

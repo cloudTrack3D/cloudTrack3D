@@ -50,6 +50,13 @@ def load_ir_image(img_path: str) -> np.ndarray:
         return np.array(img.convert("L"), dtype=np.uint8)
 
 
+def _resolve_data_dir(d: str) -> str:
+    if os.path.isdir(d):
+        return d
+    alt = os.path.join("../data", os.path.basename(d.rstrip("/")))
+    return alt if os.path.isdir(alt) else d
+
+
 def discover_matched_granules(
     vfm_dir: str = "../vfms",
     ir_dir: str = "../ir10.5",
@@ -61,6 +68,8 @@ def discover_matched_granules(
     overpass timestamp, and match them with `ir_dir` satellite images.
     Deduplicates Release 006 and Release 007 files of the same orbit granule (preferring 007).
     """
+    vfm_dir = _resolve_data_dir(vfm_dir)
+    ir_dir = _resolve_data_dir(ir_dir)
     if cache_path and os.path.isfile(cache_path):
         with open(cache_path, "r", encoding="utf-8") as f:
             cached = json.load(f)
@@ -183,6 +192,8 @@ def filter_granules_with_30min_window(
     Filter `granules` to only keep those that have valid PNG files for the full 30-minute
     3-frame window (t=0, t=-15 min, t=-30 min) in `ir_dir` (and `vis_dir` if `use_vis06=True`).
     """
+    ir_dir = _resolve_data_dir(ir_dir)
+    vis_dir = _resolve_data_dir(vis_dir)
     if cache_path and os.path.isfile(cache_path):
         with open(cache_path, "r", encoding="utf-8") as f:
             cached = json.load(f)
@@ -565,8 +576,8 @@ class CloudPatchDataset(Dataset):
         self.use_vis06 = use_vis06
         self.use_era5 = use_era5
         self.use_satellite = use_satellite
-        self.ir_dir = ir_dir
-        self.vis_dir = vis_dir
+        self.ir_dir = _resolve_data_dir(ir_dir)
+        self.vis_dir = _resolve_data_dir(vis_dir)
         self._era5_cache = era5_cache or {}
         self.allowed_beams = tuple(allowed_beams)
 
@@ -827,3 +838,29 @@ def load_fixed_dataset_split(
     train_list = [MatchedGranule(**{k: item[k] for k in fields if k in item}) for item in sec["train"]]
     test_list = [MatchedGranule(**{k: item[k] for k in fields if k in item}) for item in sec["test"]]
     return train_list, test_list
+
+
+class InMemoryDataset(Dataset):
+    """Pre-materializes dataset items in RAM once for fast multi-pass validation/training."""
+
+    def __init__(self, base_ds: Dataset, max_items: int | None = None, seed: int = 42) -> None:
+        n = len(base_ds)  # type: ignore[arg-type]
+        if max_items is not None and max_items < n:
+            rng = np.random.default_rng(seed)
+            indices = rng.choice(n, size=max_items, replace=False).tolist()
+        else:
+            indices = list(range(n))
+        self.items = [base_ds[i] for i in indices]
+
+    def __len__(self) -> int:
+        return len(self.items)
+
+    def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
+        return self.items[idx]
+
+
+def add_derived_metrics(m: dict[str, Any]) -> dict[str, Any]:
+    if "cloud_f1" in m:
+        f1 = float(m["cloud_f1"])
+        m["cloud_iou"] = float(f1 / max(2.0 - f1, 1e-8))
+    return m

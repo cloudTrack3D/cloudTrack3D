@@ -40,6 +40,7 @@ from dataset import (
     MAX_HEIGHT_KM,
     CloudPatchDataset,
     MatchedGranule,
+    _resolve_data_dir,
     discover_matched_granules,
     filter_granules_with_30min_window,
     sample_era5_patch,
@@ -71,8 +72,15 @@ def preload_era5_for_granules(
     grids of shape (18, 61, 77) for every granule timestamp.
     """
     t0 = time.time()
+    npz_path = "../data/era5_matched_490.npz"
+    if not os.path.isdir(era5_root) and os.path.isfile(npz_path):
+        archive = np.load(npz_path)
+        era5_cache = {g.granule_id: archive[g.granule_id].astype(np.float32) for g in granules if g.granule_id in archive}
+        print(f"[Preload ERA5] Loaded {len(era5_cache)} (18, 61, 77) profiles from {npz_path} in {time.time() - t0:.2f}s.")
+        return era5_cache
+
     db = ERA5Database(era5_root)
-    era5_cache: dict[str, np.ndarray] = {}
+    era5_cache = {}
     for g in granules:
         dt = datetime.datetime.fromtimestamp(g.timestamp_utc, tz=datetime.timezone.utc)
         prof_t = db.load_profile(dt, "temperature", COMMON_9_PRESSURE_LEVELS, interpolate_time=True)
@@ -110,8 +118,8 @@ def make_era5_patch_dataset(
     ds.use_vis06 = use_vis06
     ds.use_era5 = use_era5
     ds.use_satellite = use_satellite
-    ds.ir_dir = "../ir10.5"
-    ds.vis_dir = "../vis0.6"
+    ds.ir_dir = _resolve_data_dir("../ir10.5")
+    ds.vis_dir = _resolve_data_dir("../vis0.6")
     ds._era5_cache = era5_cache
     ds.allowed_beams = (1, 2, 3)
     ds._img_cache = img_cache
